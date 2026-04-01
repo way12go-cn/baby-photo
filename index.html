@@ -3,47 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026年3月15日 宝宝28天拍摄作品集</title>
+    <title>2026/03/15 宝宝28天摄影图集</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", Arial, sans-serif; /* 适配中文字体 */
+            font-family: "Microsoft YaHei", Arial, sans-serif;
         }
 
+        /* 黑色背景 */
         body {
-            background-color: #f5f5f5;
+            background-color: #000;
             padding: 20px;
-            overflow-x: hidden; /* 防止横向滚动 */
-            transition: background-color 0.3s; /* 增加过渡动画 */
+            overflow-x: hidden;
         }
 
-        /* 密码弹窗样式 - 优化响应式和交互 */
+        /* 密码弹窗样式 */
         .password-box {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #fff;
+            background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             padding: 20px;
-            animation: fadeIn 0.3s ease; /* 弹窗淡入动画 */
-        }
-
-        /* 淡入动画 */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .password-box h2 {
-            color: #333;
+            color: #fff;
             margin-bottom: 15px;
             font-size: 22px;
             text-align: center;
@@ -55,20 +48,15 @@
             width: 100%;
             max-width: 250px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: 1px solid #666;
             border-radius: 5px;
             text-align: center;
             outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.3s;
+            background: #222;
+            color: #fff;
         }
 
-        /* 输入框聚焦样式 */
-        .password-box input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-        }
-
-        /* 输入框错误状态样式 */
         .password-box input.error {
             border-color: #dc3545;
             box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
@@ -78,21 +66,12 @@
             color: #dc3545;
             font-size: 14px;
             margin: 5px 0 15px;
-            height: 18px; /* 固定高度防止布局跳动 */
-            visibility: hidden; /* 初始隐藏 */
-            transition: visibility 0.1s;
+            height: 18px;
+            visibility: hidden;
         }
 
         .error-tip.show {
             visibility: visible;
-            animation: shake 0.3s ease; /* 错误提示抖动 */
-        }
-
-        /* 抖动动画 */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-3px); }
-            40%, 80% { transform: translateX(3px); }
         }
 
         .password-box button {
@@ -103,70 +82,54 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: background-color 0.3s;
             width: 100%;
             max-width: 250px;
         }
 
         .password-box button:hover {
             background: #0056b3;
-            transform: translateY(-2px); /* 悬浮上移 */
         }
 
-        .password-box button:active {
-            transform: translateY(0); /* 点击回弹 */
-        }
-
+        /* 标题样式 */
         .title {
             text-align: center;
             margin: 30px 0;
-            color: #333;
-            font-size: clamp(20px, 5vw, 28px); /* 响应式字体 */
+            color: #fff;
+            font-size: clamp(20px, 5vw, 28px);
             font-weight: 600;
-            opacity: 0; /* 初始隐藏 */
-            animation: fadeIn 0.5s ease 0.3s forwards; /* 解锁后淡入 */
         }
 
+        /* 相册布局 - 手机每行2张 */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 更小的基础列宽，适配手机 */
+            /* 强制手机每行2张，大屏也保持2张更协调 */
+            grid-template-columns: repeat(auto-fill, minmax(calc(50% - 7.5px), 1fr));
             gap: 15px;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 0 10px;
-            opacity: 0; /* 初始隐藏 */
-            animation: fadeIn 0.5s ease 0.5s forwards; /* 解锁后淡入 */
         }
 
+        /* 预览图裁剪 - 面部优先（object-position:center 优先显示中心区域） */
         .gallery img {
             width: 100%;
-            height: 200px;
+            height: 250px; /* 增加高度提升预览体验 */
             object-fit: cover;
+            object-position: center; /* 优先显示中心区域（面部优先） */
             border-radius: 8px;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            loading: lazy; /* 懒加载优化性能 */
-            /* 图片加载淡入 */
-            opacity: 0;
-            animation: imgFadeIn 0.5s ease forwards;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+            loading: lazy;
         }
-
-        /* 图片加载动画（错开时间，更自然） */
-        @keyframes imgFadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 给每张图片添加不同的动画延迟 */
-        .gallery img:nth-child(odd) { animation-delay: 0.1s; }
-        .gallery img:nth-child(even) { animation-delay: 0.2s; }
 
         .gallery img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
         }
 
+        /* 预览模态框 */
         .modal {
             display: none;
             position: fixed;
@@ -174,26 +137,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 999;
             justify-content: center;
             align-items: center;
-            animation: modalFadeIn 0.2s ease;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal-content {
-            max-width: 90%;
+            max-width: 95%;
             max-height: 90vh;
             border-radius: 5px;
-            transition: transform 0.2s ease; /* 切换图片过渡 */
+            object-fit: contain; /* 大图完整显示 */
         }
 
-        /* 关闭按钮优化 */
+        /* 关闭按钮 */
         .close {
             position: absolute;
             top: 20px;
@@ -201,17 +158,16 @@
             color: white;
             font-size: 40px;
             cursor: pointer;
-            transition: color 0.3s, transform 0.2s;
+            transition: color 0.3s;
             z-index: 1000;
-            user-select: none; /* 防止选中文字 */
+            user-select: none;
         }
 
         .close:hover {
             color: #ddd;
-            transform: rotate(90deg); /* 悬浮旋转 */
         }
 
-        /* 图片预览左右切换按钮 */
+        /* 切换按钮 */
         .modal-nav {
             position: absolute;
             top: 50%;
@@ -220,14 +176,9 @@
             font-size: 50px;
             cursor: pointer;
             padding: 0 20px;
-            transition: color 0.3s, opacity 0.3s;
+            transition: color 0.3s;
             user-select: none;
             opacity: 0.8;
-        }
-
-        .modal-nav:hover {
-            color: #ddd;
-            opacity: 1;
         }
 
         .prev-btn {
@@ -238,21 +189,12 @@
             right: 20px;
         }
 
-        /* 图片数量提示 */
-        .img-counter {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            font-size: 16px;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 15px;
-            border-radius: 20px;
-            user-select: none;
+        .modal-nav:hover {
+            color: #fff;
+            opacity: 1;
         }
 
-        /* 适配小屏设备 */
+        /* 移动端适配 */
         @media (max-width: 768px) {
             .close {
                 font-size: 30px;
@@ -270,31 +212,7 @@
             }
 
             .gallery img {
-                height: 160px; /* 手机端图片高度更小 */
-            }
-
-            .img-counter {
-                font-size: 14px;
-                padding: 4px 12px;
-            }
-        }
-
-        /* 适配超小屏（手机竖屏） */
-        @media (max-width: 480px) {
-            .password-box h2 {
-                font-size: 18px;
-            }
-
-            .password-box input, .password-box button {
-                max-width: 220px;
-            }
-
-            .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-
-            .gallery img {
-                height: 140px;
+                height: 200px;
             }
         }
     </style>
@@ -308,28 +226,29 @@
         <button id="confirmBtn">确认</button>
     </div>
 
-    <h1 class="title">2026年3月15日 宝宝28天拍摄作品集</h1>
+    <h1 class="title">2026/03/15 宝宝28天摄影图集</h1>
     
     <div class="gallery" id="gallery">
-        <img src="1.jpg" alt="宝宝28天拍摄作品1" data-index="0">
-        <img src="2.jpg" alt="宝宝28天拍摄作品2" data-index="1">
-        <img src="3.jpg" alt="宝宝28天拍摄作品3" data-index="2">
-        <img src="4.jpg" alt="宝宝28天拍摄作品4" data-index="3">
-        <img src="5.jpg" alt="宝宝28天拍摄作品5" data-index="4">
-        <img src="6.jpg" alt="宝宝28天拍摄作品6" data-index="5">
-        <img src="7.jpg" alt="宝宝28天拍摄作品7" data-index="6">
-        <img src="8.jpg" alt="宝宝28天拍摄作品8" data-index="7">
-        <img src="9.jpg" alt="宝宝28天拍摄作品9" data-index="8">
-        <img src="10.jpg" alt="宝宝28天拍摄作品10" data-index="9">
-        <img src="11.jpg" alt="宝宝28天拍摄作品11" data-index="10">
-        <img src="12.jpg" alt="宝宝28天拍摄作品12" data-index="11">
-        <img src="13.jpg" alt="宝宝28天拍摄作品13" data-index="12">
-        <img src="14.jpg" alt="宝宝28天拍摄作品14" data-index="13">
-        <img src="15.jpg" alt="宝宝28天拍摄作品15" data-index="14">
-        <img src="16.jpg" alt="宝宝28天拍摄作品16" data-index="15">
-        <img src="17.jpg" alt="宝宝28天拍摄作品17" data-index="16">
-        <img src="18.jpg" alt="宝宝28天拍摄作品18" data-index="17">
-        <img src="19.jpg" alt="宝宝28天拍摄作品19" data-index="18">
+        <!-- 使用jsDelivr加速，替换为你的GitHub仓库路径（需要先把照片上传到GitHub） -->
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/1.jpg" alt="宝宝28天拍摄作品1" data-index="0">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/2.jpg" alt="宝宝28天拍摄作品2" data-index="1">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/3.jpg" alt="宝宝28天拍摄作品3" data-index="2">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/4.jpg" alt="宝宝28天拍摄作品4" data-index="3">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/5.jpg" alt="宝宝28天拍摄作品5" data-index="4">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/6.jpg" alt="宝宝28天拍摄作品6" data-index="5">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/7.jpg" alt="宝宝28天拍摄作品7" data-index="6">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/8.jpg" alt="宝宝28天拍摄作品8" data-index="7">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/9.jpg" alt="宝宝28天拍摄作品9" data-index="8">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/10.jpg" alt="宝宝28天拍摄作品10" data-index="9">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/11.jpg" alt="宝宝28天拍摄作品11" data-index="10">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/12.jpg" alt="宝宝28天拍摄作品12" data-index="11">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/13.jpg" alt="宝宝28天拍摄作品13" data-index="12">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/14.jpg" alt="宝宝28天拍摄作品14" data-index="13">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/15.jpg" alt="宝宝28天拍摄作品15" data-index="14">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/16.jpg" alt="宝宝28天拍摄作品16" data-index="15">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/17.jpg" alt="宝宝28天拍摄作品17" data-index="16">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/18.jpg" alt="宝宝28天拍摄作品18" data-index="17">
+        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/photo-album@main/19.jpg" alt="宝宝28天拍摄作品19" data-index="18">
     </div>
 
     <div class="modal" id="modal">
@@ -337,12 +256,14 @@
         <span class="modal-nav prev-btn" id="prevBtn" aria-label="上一张">❮</span>
         <span class="modal-nav next-btn" id="nextBtn" aria-label="下一张">❯</span>
         <img src="" class="modal-content" id="modalImg">
-        <div class="img-counter" id="imgCounter">1 / 19</div> <!-- 图片数量提示 -->
     </div>
 
     <script>
-        // 🔑 这里修改密码！默认：20260315
-        const correctPassword = "20260315";
+        // 配置项
+        const correctPassword = "260315"; // 修改后的密码
+        const COOKIE_NAME = "album_password_valid";
+        const COOKIE_EXPIRE_HOURS = 24; // 24小时免密
+
         // 获取DOM元素
         const passwordBox = document.getElementById('passwordBox');
         const passwordInput = document.getElementById('passwordInput');
@@ -354,22 +275,41 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const galleryImgs = document.querySelectorAll('.gallery img');
-        const imgCounter = document.getElementById('imgCounter');
-        let currentImgIndex = 0; // 记录当前预览图片索引
+        let currentImgIndex = 0;
 
-        // 更新图片计数器
-        function updateCounter() {
-            imgCounter.textContent = `${currentImgIndex + 1} / ${galleryImgs.length}`;
+        // ------------- Cookie 操作函数 -------------
+        // 设置Cookie
+        function setCookie(name, value, hours) {
+            const date = new Date();
+            date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
         }
 
-        // 密码验证函数
+        // 获取Cookie
+        function getCookie(name) {
+            const nameEQ = `${name}=`;
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // 检查是否已登录（24小时内）
+        function checkValidCookie() {
+            const cookieValue = getCookie(COOKIE_NAME);
+            return cookieValue === correctPassword;
+        }
+
+        // ------------- 密码验证 -------------
         function checkPassword() {
             const inputVal = passwordInput.value.trim();
-            // 清空错误状态
             passwordInput.classList.remove('error');
             errorTip.classList.remove('show');
 
-            // 空值验证
             if (!inputVal) {
                 errorTip.textContent = '请输入密码后再提交';
                 passwordInput.classList.add('error');
@@ -378,110 +318,76 @@
                 return;
             }
 
-            // 密码验证
             if (inputVal === correctPassword) {
-                // 密码正确，弹窗淡出
-                passwordBox.style.opacity = 0;
-                setTimeout(() => {
-                    passwordBox.style.display = 'none';
-                }, 300);
-                // 解锁后允许图片预览
+                // 设置24小时免密Cookie
+                setCookie(COOKIE_NAME, correctPassword, COOKIE_EXPIRE_HOURS);
+                passwordBox.style.display = 'none';
                 initGalleryClick();
             } else {
                 passwordInput.classList.add('error');
                 errorTip.textContent = '密码错误，请重新输入';
                 errorTip.classList.add('show');
-                passwordInput.select(); // 选中错误密码方便重新输入
-                // 错误时按钮抖动
-                confirmBtn.style.animation = 'shake 0.3s ease';
-                setTimeout(() => {
-                    confirmBtn.style.animation = '';
-                }, 300);
+                passwordInput.select();
             }
         }
 
-        // 初始化图片点击预览
+        // ------------- 相册功能 -------------
         function initGalleryClick() {
             galleryImgs.forEach(img => {
                 img.addEventListener('click', function() {
                     currentImgIndex = parseInt(this.dataset.index);
                     modal.style.display = 'flex';
                     modalImg.src = this.src;
-                    updateCounter(); // 更新计数器
                 });
             });
         }
 
-        // 预览图切换 - 上一张
         function showPrevImg() {
             currentImgIndex = (currentImgIndex - 1 + galleryImgs.length) % galleryImgs.length;
             modalImg.src = galleryImgs[currentImgIndex].src;
-            updateCounter(); // 更新计数器
         }
 
-        // 预览图切换 - 下一张
         function showNextImg() {
             currentImgIndex = (currentImgIndex + 1) % galleryImgs.length;
             modalImg.src = galleryImgs[currentImgIndex].src;
-            updateCounter(); // 更新计数器
         }
 
-        // 关闭预览
         function closeModal() {
             modal.style.display = 'none';
         }
 
-        // 点击模态框背景关闭
         function handleModalClick(e) {
             if (e.target === modal) {
                 closeModal();
             }
         }
 
-        // 阻止模态框内元素点击冒泡（避免点按钮/图片关闭）
-        function stopPropagation(e) {
-            e.stopPropagation();
+        // ------------- 初始化 -------------
+        // 检查Cookie，有效则直接解锁
+        if (checkValidCookie()) {
+            passwordBox.style.display = 'none';
+            initGalleryClick();
         }
 
-        // 绑定事件（解耦HTML和JS）
+        // 绑定事件
         confirmBtn.addEventListener('click', checkPassword);
-        // 按回车触发密码验证
         passwordInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
+            if (e.key === 'Enter') checkPassword();
         });
         closeBtn.addEventListener('click', closeModal);
         prevBtn.addEventListener('click', showPrevImg);
         nextBtn.addEventListener('click', showNextImg);
         modal.addEventListener('click', handleModalClick);
-        // 阻止内部元素冒泡
-        modalImg.addEventListener('click', stopPropagation);
-        prevBtn.addEventListener('click', stopPropagation);
-        nextBtn.addEventListener('click', stopPropagation);
-        imgCounter.addEventListener('click', stopPropagation);
-        // 键盘方向键切换/ESC关闭
+        
+        // 键盘操作
         document.addEventListener('keydown', function(e) {
             if (modal.style.display === 'flex') {
                 switch(e.key) {
-                    case 'ArrowLeft':
-                        showPrevImg();
-                        e.preventDefault(); // 防止页面滚动
-                        break;
-                    case 'ArrowRight':
-                        showNextImg();
-                        e.preventDefault(); // 防止页面滚动
-                        break;
-                    case 'Escape':
-                        closeModal();
-                        break;
+                    case 'ArrowLeft': showPrevImg(); break;
+                    case 'ArrowRight': showNextImg(); break;
+                    case 'Escape': closeModal(); break;
                 }
             }
-        });
-
-        // 页面加载后自动聚焦密码框
-        window.addEventListener('load', function() {
-            passwordInput.focus();
         });
     </script>
 </body>
