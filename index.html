@@ -3,391 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026/03/15 宝宝28天摄影图集</title>
+    <title>宝宝成长相册</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", Arial, sans-serif;
         }
 
-        /* 黑色背景 */
         body {
-            background-color: #000;
-            padding: 20px;
-            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* 密码弹窗样式 */
-        .password-box {
+        /* 密码弹窗 */
+        .password-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            padding: 20px;
+        }
+
+        .password-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
         .password-box h2 {
-            color: #fff;
-            margin-bottom: 15px;
-            font-size: 22px;
-            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 18px;
         }
 
         .password-box input {
-            padding: 12px 15px;
+            padding: 10px 15px;
             font-size: 16px;
-            width: 100%;
-            max-width: 250px;
-            margin: 10px 0;
-            border: 1px solid #666;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            text-align: center;
+            margin-bottom: 15px;
+            width: 200px;
             outline: none;
-            transition: border-color 0.3s;
-            background: #222;
-            color: #fff;
-        }
-
-        .password-box input.error {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
-        }
-
-        .error-tip {
-            color: #dc3545;
-            font-size: 14px;
-            margin: 5px 0 15px;
-            height: 18px;
-            visibility: hidden;
-        }
-
-        .error-tip.show {
-            visibility: visible;
         }
 
         .password-box button {
-            padding: 12px 30px;
-            background: #007bff;
-            color: white;
+            padding: 10px 20px;
+            background: #409eff;
+            color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
-            width: 100%;
-            max-width: 250px;
         }
 
         .password-box button:hover {
-            background: #0056b3;
+            background: #337ecc;
         }
 
-        /* 标题样式 */
-        .title {
-            text-align: center;
-            margin: 30px 0;
-            color: #fff;
-            font-size: clamp(20px, 5vw, 28px);
-            font-weight: 600;
+        .error {
+            color: #f56c6c;
+            margin-top: 10px;
+            font-size: 14px;
+            display: none;
         }
 
-        /* 相册布局 - 手机每行2张 */
+        /* 相册容器 */
+        .gallery-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: none;
+        }
+
         .gallery {
-            display: grid;
-            /* 强制手机每行2张，大屏也保持2张更协调 */
-            grid-template-columns: repeat(auto-fill, minmax(calc(50% - 7.5px), 1fr));
-            gap: 15px;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 10px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            transition: transform 0.3s ease;
         }
 
-        /* 预览图裁剪 - 面部优先（object-position:center 优先显示中心区域） */
         .gallery img {
-            width: 100%;
-            height: 250px; /* 增加高度提升预览体验 */
-            object-fit: cover;
-            object-position: center; /* 优先显示中心区域（面部优先） */
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            flex-shrink: 0;
+            background: #000;
             loading: lazy;
         }
 
-        .gallery img:hover {
-            transform: scale(1.03);
-            box-shadow: 0 4px 12px rgba(255,255,255,0.2);
-        }
-
-        /* 预览模态框 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            max-width: 95%;
-            max-height: 90vh;
-            border-radius: 5px;
-            object-fit: contain; /* 大图完整显示 */
-        }
-
-        /* 关闭按钮 */
-        .close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            transition: color 0.3s;
-            z-index: 1000;
-            user-select: none;
-        }
-
-        .close:hover {
-            color: #ddd;
-        }
-
-        /* 切换按钮 */
-        .modal-nav {
+        /* 导航按钮 */
+        .nav-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            color: white;
-            font-size: 50px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
             cursor: pointer;
-            padding: 0 20px;
-            transition: color 0.3s;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             user-select: none;
-            opacity: 0.8;
         }
 
-        .prev-btn {
+        .prev {
             left: 20px;
         }
 
-        .next-btn {
+        .next {
             right: 20px;
         }
 
-        .modal-nav:hover {
-            color: #fff;
-            opacity: 1;
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .close {
-                font-size: 30px;
-                top: 15px;
-                right: 20px;
-            }
+        /* 全屏按钮 */
+        .fullscreen-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+        }
 
-            .modal-nav {
-                font-size: 35px;
-                padding: 0 10px;
-            }
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
 
-            .gallery {
-                gap: 10px;
-            }
-
-            .gallery img {
-                height: 200px;
-            }
+        /* 计数器 */
+        .counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- 密码输入框 -->
-    <div class="password-box" id="passwordBox">
-        <h2>请输入密码查看宝宝照片</h2>
-        <input type="password" id="passwordInput" placeholder="输入密码">
-        <div class="error-tip" id="errorTip">密码错误，请重新输入</div>
-        <button id="confirmBtn">确认</button>
+    <!-- 密码验证 -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-box">
+            <h2>请输入相册密码</h2>
+            <input type="password" id="passwordInput" placeholder="输入密码">
+            <button onclick="checkPassword()">确认</button>
+            <div class="error" id="errorTip">密码错误，请重试</div>
+        </div>
     </div>
 
-    <h1 class="title">2026/03/15 宝宝28天摄影图集</h1>
-    
-    <div class="gallery" id="gallery">
-        <!-- 使用jsDelivr加速，替换为你的GitHub仓库路径（需要先把照片上传到GitHub） -->
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/1.jpg" alt="宝宝28天拍摄作品1" data-index="0">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/2.jpg" alt="宝宝28天拍摄作品2" data-index="1">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/3.jpg" alt="宝宝28天拍摄作品3" data-index="2">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/4.jpg" alt="宝宝28天拍摄作品4" data-index="3">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/5.jpg" alt="宝宝28天拍摄作品5" data-index="4">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/6.jpg" alt="宝宝28天拍摄作品6" data-index="5">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/7.jpg" alt="宝宝28天拍摄作品7" data-index="6">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/8.jpg" alt="宝宝28天拍摄作品8" data-index="7">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/9.jpg" alt="宝宝28天拍摄作品9" data-index="8">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/10.jpg" alt="宝宝28天拍摄作品10" data-index="9">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/11.jpg" alt="宝宝28天拍摄作品11" data-index="10">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/12.jpg" alt="宝宝28天拍摄作品12" data-index="11">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/13.jpg" alt="宝宝28天拍摄作品13" data-index="12">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/14.jpg" alt="宝宝28天拍摄作品14" data-index="13">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/15.jpg" alt="宝宝28天拍摄作品15" data-index="14">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/16.jpg" alt="宝宝28天拍摄作品16" data-index="15">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/17.jpg" alt="宝宝28天拍摄作品17" data-index="16">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/18.jpg" alt="宝宝28天拍摄作品18" data-index="17">
-        <img src="https://cdn.jsdelivr.net/gh/way12go-cn/baby-photo@main/19.jpg" alt="宝宝28天拍摄作品19" data-index="18">
-    </div>
+    <!-- 相册主体 -->
+    <div class="gallery-container" id="galleryContainer">
+        <div class="gallery" id="gallery">
+            <!-- 👇 所有图片已替换为国内加速镜像 -->
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/1.jpg" alt="宝宝照片" data-index="0">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/2.jpg" alt="宝宝照片" data-index="1">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/3.jpg" alt="宝宝照片" data-index="2">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/4.jpg" alt="宝宝照片" data-index="3">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/5.jpg" alt="宝宝照片" data-index="4">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/6.jpg" alt="宝宝照片" data-index="5">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/7.jpg" alt="宝宝照片" data-index="6">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/8.jpg" alt="宝宝照片" data-index="7">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/9.jpg" alt="宝宝照片" data-index="8">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/10.jpg" alt="宝宝照片" data-index="9">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/11.jpg" alt="宝宝照片" data-index="10">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/12.jpg" alt="宝宝照片" data-index="11">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/13.jpg" alt="宝宝照片" data-index="12">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/14.jpg" alt="宝宝照片" data-index="13">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/15.jpg" alt="宝宝照片" data-index="14">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/16.jpg" alt="宝宝照片" data-index="15">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/17.jpg" alt="宝宝照片" data-index="16">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/18.jpg" alt="宝宝照片" data-index="17">
+            <img src="https://fastly.jsdelivr.net/gh/way12go-cn/baby-photo@main/19.jpg" alt="宝宝照片" data-index="18">
+        </div>
 
-    <div class="modal" id="modal">
-        <span class="close" id="closeBtn" aria-label="关闭预览">×</span>
-        <span class="modal-nav prev-btn" id="prevBtn" aria-label="上一张">❮</span>
-        <span class="modal-nav next-btn" id="nextBtn" aria-label="下一张">❯</span>
-        <img src="" class="modal-content" id="modalImg">
+        <button class="nav-btn prev" onclick="prevImg()">&lt;</button>
+        <button class="nav-btn next" onclick="nextImg()">&gt;</button>
+        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
+        <div class="counter" id="counter">1 / 19</div>
     </div>
 
     <script>
-        // 配置项
-        const correctPassword = "260315"; // 修改后的密码
-        const COOKIE_NAME = "album_password_valid";
-        const COOKIE_EXPIRE_HOURS = 24; // 24小时免密
+        // 配置
+        const CORRECT_PASSWORD = "123456"; // 可自行修改密码
+        const COOKIE_EXPIRE = 1; // 免登录天数：1天
+        let currentIndex = 0;
+        const gallery = document.getElementById('gallery');
+        const totalImages = document.querySelectorAll('#gallery img').length;
 
-        // 获取DOM元素
-        const passwordBox = document.getElementById('passwordBox');
-        const passwordInput = document.getElementById('passwordInput');
-        const errorTip = document.getElementById('errorTip');
-        const confirmBtn = document.getElementById('confirmBtn');
-        const modal = document.getElementById('modal');
-        const modalImg = document.getElementById('modalImg');
-        const closeBtn = document.getElementById('closeBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const galleryImgs = document.querySelectorAll('.gallery img');
-        let currentImgIndex = 0;
-
-        // ------------- Cookie 操作函数 -------------
-        // 设置Cookie
-        function setCookie(name, value, hours) {
-            const date = new Date();
-            date.setTime(date.getTime() + (hours * 60 * 60 * 1000));
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = `${name}=${value}; ${expires}; path=/; SameSite=Lax`;
-        }
-
-        // 获取Cookie
-        function getCookie(name) {
-            const nameEQ = `${name}=`;
-            const ca = document.cookie.split(';');
-            for(let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        // 检查是否已登录（24小时内）
-        function checkValidCookie() {
-            const cookieValue = getCookie(COOKIE_NAME);
-            return cookieValue === correctPassword;
-        }
-
-        // ------------- 密码验证 -------------
+        // 密码验证
         function checkPassword() {
-            const inputVal = passwordInput.value.trim();
-            passwordInput.classList.remove('error');
-            errorTip.classList.remove('show');
-
-            if (!inputVal) {
-                errorTip.textContent = '请输入密码后再提交';
-                passwordInput.classList.add('error');
-                errorTip.classList.add('show');
-                passwordInput.focus();
-                return;
-            }
-
-            if (inputVal === correctPassword) {
-                // 设置24小时免密Cookie
-                setCookie(COOKIE_NAME, correctPassword, COOKIE_EXPIRE_HOURS);
-                passwordBox.style.display = 'none';
-                initGalleryClick();
+            const input = document.getElementById('passwordInput').value.trim();
+            const errorTip = document.getElementById('errorTip');
+            
+            if (input === CORRECT_PASSWORD) {
+                // 设置Cookie，24小时免密
+                const date = new Date();
+                date.setTime(date.getTime() + (COOKIE_EXPIRE * 24 * 60 * 60 * 1000));
+                document.cookie = `album_auth=success; expires=${date.toUTCString()}; path=/`;
+                
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('galleryContainer').style.display = 'block';
             } else {
-                passwordInput.classList.add('error');
-                errorTip.textContent = '密码错误，请重新输入';
-                errorTip.classList.add('show');
-                passwordInput.select();
+                errorTip.style.display = 'block';
             }
         }
 
-        // ------------- 相册功能 -------------
-        function initGalleryClick() {
-            galleryImgs.forEach(img => {
-                img.addEventListener('click', function() {
-                    currentImgIndex = parseInt(this.dataset.index);
-                    modal.style.display = 'flex';
-                    modalImg.src = this.src;
-                });
-            });
-        }
-
-        function showPrevImg() {
-            currentImgIndex = (currentImgIndex - 1 + galleryImgs.length) % galleryImgs.length;
-            modalImg.src = galleryImgs[currentImgIndex].src;
-        }
-
-        function showNextImg() {
-            currentImgIndex = (currentImgIndex + 1) % galleryImgs.length;
-            modalImg.src = galleryImgs[currentImgIndex].src;
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        function handleModalClick(e) {
-            if (e.target === modal) {
-                closeModal();
+        // 页面加载检查Cookie
+        window.onload = function() {
+            if (document.cookie.includes('album_auth=success')) {
+                document.getElementById('passwordModal').style.display = 'none';
+                document.getElementById('galleryContainer').style.display = 'block';
             }
         }
 
-        // ------------- 初始化 -------------
-        // 检查Cookie，有效则直接解锁
-        if (checkValidCookie()) {
-            passwordBox.style.display = 'none';
-            initGalleryClick();
+        // 上一张
+        function prevImg() {
+            currentIndex = (currentIndex - 1 + totalImages) % totalImages;
+            updateGallery();
         }
 
-        // 绑定事件
-        confirmBtn.addEventListener('click', checkPassword);
-        passwordInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') checkPassword();
+        // 下一张
+        function nextImg() {
+            currentIndex = (currentIndex + 1) % totalImages;
+            updateGallery();
+        }
+
+        // 更新相册
+        function updateGallery() {
+            gallery.style.transform = `translateX(-${currentIndex * 100}vw)`;
+            document.getElementById('counter').innerText = `${currentIndex + 1} / ${totalImages}`;
+        }
+
+        // 全屏切换
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {});
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // 键盘/手势控制
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevImg();
+            if (e.key === 'ArrowRight') nextImg();
         });
-        closeBtn.addEventListener('click', closeModal);
-        prevBtn.addEventListener('click', showPrevImg);
-        nextBtn.addEventListener('click', showNextImg);
-        modal.addEventListener('click', handleModalClick);
-        
-        // 键盘操作
-        document.addEventListener('keydown', function(e) {
-            if (modal.style.display === 'flex') {
-                switch(e.key) {
-                    case 'ArrowLeft': showPrevImg(); break;
-                    case 'ArrowRight': showNextImg(); break;
-                    case 'Escape': closeModal(); break;
-                }
-            }
+
+        // 触摸滑动
+        let startX = 0;
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) nextImg();
+            if (endX - startX > 50) prevImg();
         });
     </script>
 </body>
